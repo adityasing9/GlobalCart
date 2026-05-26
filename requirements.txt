@@ -1,0 +1,5 @@
+flask==3.0.3
+flask-session==0.8.0
+mysql-connector-python==8.3.0
+werkzeug==3.0.3
+python-dotenv==1.0.1

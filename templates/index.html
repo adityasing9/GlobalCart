@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalCart — Digital Products Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a class="nav-logo" href="/" onclick="navigate('/')">
+        <span class="logo-mark">GC</span>
+        <span class="logo-text">GlobalCart</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="/" onclick="navigate('/')">Home</a>
+        <a href="/products" onclick="navigate('/products')">Products</a>
+        <a href="/orders" onclick="navigate('/orders')" id="navOrders" style="display:none">My Orders</a>
+        <a href="/admin" onclick="navigate('/admin')" id="navAdmin" style="display:none">Admin</a>
+      </div>
+      <div class="nav-actions">
+
+        <button id="themeToggle" class="theme-toggle" aria-label="Theme Toggle">
+          <span class="sun">☀️</span>
+          <span class="moon">🌙</span>
+        </button>
+
+        <div class="search-wrap">
+          <input type="text" id="globalSearch" placeholder="Search products..." class="nav-search"
+            onkeyup="handleSearch(event)">
+          <span class="search-icon">⌕</span>
+        </div>
+
+        <a href="/cart" onclick="navigate('/cart')" class="cart-btn" id="cartBtn">
+          <span>🛒</span>
+          <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+        </a>
+
+        <div id="authArea">
+          <a href="/login" onclick="navigate('/login')" class="btn-outline">Login</a>
+          <a href="/register" onclick="navigate('/register')" class="btn-solid">Sign Up</a>
+        </div>
+
+        <div id="userArea" style="display:none">
+          <span class="user-chip" id="userChip"></span>
+          <button class="btn-outline" onclick="logout()">Logout</button>
+        </div>
+
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()">☰</button>
+    </div>
+  </nav>
+
+  <!-- PAGE CONTAINER -->
+  <main id="app">
+    <div class="page-loader" id="pageLoader">
+      <div class="loader-ring"></div>
+    </div>
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()" style="display:none">
+    <div class="modal-box" onclick="event.stopPropagation()" id="modalBox"></div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+
+</html>
