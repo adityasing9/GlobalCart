@@ -124,6 +124,38 @@ GlobalCart/
 
 ---
 
+## 💻 Codebase & Implementation Details
+
+To fully understand the project, here is a detailed breakdown of how the core files and code logic operate:
+
+### 1. The Database Schema (`schema.sql`)
+This file is the backbone of the application. It contains all the DDL (Data Definition Language) commands to construct the database.
+
+* **`users` Table:** Stores credentials. Notice the `UNIQUE` constraints on username and email to prevent duplicates at the database level.
+* **`products` & `categories` Tables:** Core catalog data. The `product_category` table maps them together using Foreign Keys to resolve the Many-to-Many relationship.
+* **`cart` Table:** A bridge table linking `users` and `products`. It uses `ON DELETE CASCADE` for both Foreign Keys so if a user or product is deleted, the cart is automatically cleaned up.
+* **`orders`, `order_items`, and `payments` Tables:** The financial core. `order_items` stores the `unit_price` explicitly to freeze the price at the moment of checkout, protecting historical order totals even if the admin changes product prices later.
+
+### 2. Connection Pooling (`db.py`)
+Instead of opening a new database connection for every single user request (which is slow and resource-heavy), we use `mysql.connector.pooling`.
+* At startup, the app creates a "pool" of 10 persistent connections.
+* When a user visits the site, the app borrows one connection, runs the SQL query, and immediately returns the connection to the pool. This allows the app to handle high concurrency efficiently.
+
+### 3. The Backend API (`api/` folder & `app.py`)
+The backend is written in Python using the **Flask** framework and is divided into "Blueprints" for clean architecture:
+* **`app.py`:** The main entry point. It initializes the Flask server, configures secure server-side sessions, and registers the Blueprints.
+* **`auth.py`:** Handles security. Uses `werkzeug.security` to run `generate_password_hash` (PBKDF2-SHA256) on user passwords before `INSERT`ing them into the DB.
+* **`products.py`:** Runs `SELECT` queries to fetch product data and sends it to the frontend as JSON.
+* **`orders_payments.py`:** The most complex file. It contains the **Checkout Transaction**. It starts a database transaction, inserts into `orders`, iterates over the cart to insert into `order_items`, and deletes from `cart`. If *any* SQL command fails, it calls `conn.rollback()` to undo everything, ensuring ACID compliance.
+
+### 4. The Frontend (`static/js/app.js` & `index.html`)
+The project is a **Single Page Application (SPA)**. 
+* There are no page reloads. Instead, `app.js` uses JavaScript `fetch()` API calls to communicate with the Flask backend.
+* When you click "Products", JavaScript fetches the JSON data from MySQL via the backend, and dynamically constructs the HTML cards on the screen.
+* The UI is styled with raw CSS (`main.css`), utilizing CSS Variables and Glassmorphism for a premium aesthetic.
+
+---
+
 ## 🚀 Installation & Setup
 
 ### Prerequisites
