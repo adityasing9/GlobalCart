@@ -89,6 +89,70 @@ Foreign Keys (FK) are used to maintain **Referential Integrity**. They ensure th
 
 ---
 
+## ❓ Frequently Asked Questions (DBMS Viva / Defense)
+
+**1. How are passwords secured?**
+Passwords are never stored in plain text. They are securely hashed using `Werkzeug`'s PBKDF2 with SHA-256 before being stored in the database.
+
+**2. Why use a relational database instead of NoSQL?**
+E-commerce requires strict data integrity, ACID transactions (especially during checkout), and complex relationships (Users to Orders to Products). A relational database (MySQL) naturally enforces these rules.
+
+**3. How is data consistency maintained?**
+Through Normalization, Foreign Key constraints (ensuring relationships are valid), and Database Transactions (ensuring an entire checkout succeeds or completely rolls back if an error occurs).
+
+**4. How are orders connected to users?**
+Through a Foreign Key. The `orders` table has a `user_id` column that directly references the `id` column in the `users` table.
+
+**5. Why is normalization important?**
+It eliminates data redundancy (e.g., not storing user details inside every single order row) and prevents data anomalies (insert/update/delete anomalies), keeping the database clean and efficient.
+
+**6. How are many-to-many relationships handled?**
+Relational databases cannot handle Many-to-Many directly. We use a junction (or mapping) table called `order_items` that contains Foreign Keys to both the `orders` table and the `products` table.
+
+**7. What happens if foreign keys are removed?**
+The database loses referential integrity. You could accidentally delete a user but leave their orders stranded (orphaned records), or add an item to the cart that doesn't actually exist in the products table.
+
+**8. How does the checkout flow work?**
+It operates inside a single atomic transaction: (1) Calculate the total amount. (2) `INSERT` into `orders` to generate an `order_id`. (3) `INSERT` cart items into `order_items` using that `order_id`. (4) `DELETE` the user's items from the `cart`. (5) Commit transaction.
+
+**9. How are admin and user roles separated?**
+The `users` table has a `role` ENUM column (either 'user' or 'admin'). The Flask backend checks this role during session validation to restrict access to admin-only API endpoints.
+
+**10. Why use hashed passwords?**
+If the database is ever compromised or leaked, hackers cannot see the actual passwords. Hashing is a one-way mathematical function and cannot be reversed.
+
+**11. How does cart management work?**
+The `cart` table temporarily links a `user_id` to a `product_id` with a `quantity`. Because it is stored in the database (not just local cookies), the cart persists even if the user logs in from a different device.
+
+**12. What SQL queries are most used?**
+`SELECT` with `JOIN`s (to fetch carts with product details), `INSERT` (for adding to cart and checkout), `DELETE` (removing from cart), and aggregation queries like `SUM()` and `COUNT()` for the admin dashboard.
+
+**13. How does authentication work?**
+Users submit their credentials. The backend hashes the password and compares it to the database hash using `check_password_hash`. If valid, a secure session token is generated and stored in the browser.
+
+**14. How is payment data stored?**
+Currently, the system records the payment `gateway` (e.g., razorpay, card), `status`, and `transaction_id` in a `payments` table. We do NOT store sensitive credit card numbers; we rely on external gateways for PCI compliance.
+
+**15. How can scalability be improved?**
+By implementing database indexing on frequently searched columns, adding a caching layer (like Redis) for the product catalog, and horizontally scaling the Flask backend behind a load balancer.
+
+**16. Why is MySQL better for this project?**
+MySQL is highly reliable, ACID compliant, and perfectly suited for structured transactional data like financial ledgers and e-commerce orders.
+
+**17. How is database integrity maintained?**
+By strictly enforcing Primary Keys (ensuring uniqueness), Foreign Keys (ensuring relationships), and Column Constraints (`UNIQUE`, `NOT NULL`, `DEFAULT`).
+
+**18. What security measures are implemented?**
+Password hashing, connection pooling (prevents connection exhaustion), parameterized queries (prevents SQL injection), and role-based access control (RBAC).
+
+**19. What are the advantages of relational databases?**
+Strict schema enforcement, powerful `JOIN` capabilities, ACID compliance for safe transactions, and a standardized querying language (SQL).
+
+**20. How are relationships implemented between tables?**
+By taking the Primary Key (`id`) of the parent table and placing it as a Foreign Key in the child table (e.g., placing `user_id` in the `orders` table).
+
+---
+
 ## 📂 Folder Structure
 
 ```text
