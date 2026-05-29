@@ -63,7 +63,8 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-@products_bp.route('/', methods=['GET'])
+@products_bp.route('/', strict_slashes=False, methods=['GET'])
+@products_bp.route('', strict_slashes=False, methods=['GET'])
 def get_products():
     if MOCK_MODE:
         return jsonify({'products': MOCK_PRODUCTS})
@@ -188,7 +189,7 @@ def delete_product(product_id):
         cursor.close()
         conn.close()
 
-@products_bp.route('/categories/all', methods=['GET'])
+@products_bp.route('/categories/all', strict_slashes=False, methods=['GET'])
 def get_categories():
     if MOCK_MODE:
         return jsonify({'categories': MOCK_CATEGORIES})
