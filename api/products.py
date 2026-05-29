@@ -1,7 +1,58 @@
 from flask import Blueprint, request, jsonify, session
-from db import get_db
+from db import get_db, MOCK_MODE
 
 products_bp = Blueprint('products', __name__)
+
+MOCK_PRODUCTS = [
+    {
+        "id": 1,
+        "name": "Complete Python Mastery Bundle",
+        "description": "From beginner to advanced Python. Covers data structures, OOP, decorators, async, and real project builds. 400+ pages.",
+        "price": 299.00,
+        "image_url": "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&q=80",
+        "file_url": "/downloads/python-mastery.pdf",
+        "rating": 4.8,
+        "sales_count": 1243,
+        "categories": ["Programming"],
+        "category_slugs": ["programming"]
+    },
+    {
+        "id": 2,
+        "name": "Machine Learning Crash Course",
+        "description": "Hands-on ML with scikit-learn, pandas, and TensorFlow. Includes 10 complete projects with datasets.",
+        "price": 499.00,
+        "image_url": "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&q=80",
+        "file_url": "/downloads/ml-course.pdf",
+        "rating": 4.9,
+        "sales_count": 892,
+        "categories": ["AI Resources"],
+        "category_slugs": ["ai-resources"]
+    },
+    {
+        "id": 3,
+        "name": "GATE CS Notes 2025",
+        "description": "Comprehensive GATE Computer Science notes. All subjects covered: DS, Algorithms, OS, DBMS, CN, TOC.",
+        "price": 199.00,
+        "image_url": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80",
+        "file_url": "/downloads/gate-cs.pdf",
+        "rating": 4.7,
+        "sales_count": 2156,
+        "categories": ["College Notes"],
+        "category_slugs": ["college-notes"]
+    },
+    {
+        "id": 4,
+        "name": "Ultimate Resume Template Pack",
+        "description": "15 ATS-friendly resume templates for tech roles. Includes cover letter templates and LinkedIn optimization guide.",
+        "price": 149.00,
+        "image_url": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80",
+        "file_url": "/downloads/resume-pack.zip",
+        "rating": 4.6,
+        "sales_count": 3421,
+        "categories": ["Career"],
+        "category_slugs": ["career"]
+    }
+]
 
 def admin_required(f):
     from functools import wraps
@@ -14,6 +65,9 @@ def admin_required(f):
 
 @products_bp.route('/', methods=['GET'])
 def get_products():
+    if MOCK_MODE:
+        return jsonify({'products': MOCK_PRODUCTS})
+        
     category = request.args.get('category', '')
     search = request.args.get('search', '')
     conn = get_db()
@@ -45,8 +99,9 @@ def get_products():
             p['category_slugs'] = p['category_slugs'].split(',') if p['category_slugs'] else []
         return jsonify({'products': products})
     finally:
-        cursor.close()
-        conn.close()
+        if conn:
+            cursor.close()
+            conn.close()
 
 @products_bp.route('/<int:product_id>', methods=['GET'])
 def get_product(product_id):
@@ -135,6 +190,8 @@ def delete_product(product_id):
 
 @products_bp.route('/categories/all', methods=['GET'])
 def get_categories():
+    if MOCK_MODE:
+        return jsonify({'categories': MOCK_CATEGORIES})
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -142,5 +199,6 @@ def get_categories():
         cats = cursor.fetchall()
         return jsonify({'categories': cats})
     finally:
-        cursor.close()
-        conn.close()
+        if conn:
+            cursor.close()
+            conn.close()
