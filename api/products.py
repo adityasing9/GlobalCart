@@ -54,6 +54,13 @@ MOCK_PRODUCTS = [
     }
 ]
 
+MOCK_CATEGORIES = [
+    {"id": 1, "name": "Programming", "slug": "programming", "icon": "💻"},
+    {"id": 2, "name": "College Notes", "slug": "college-notes", "icon": "📚"},
+    {"id": 3, "name": "AI Resources", "slug": "ai-resources", "icon": "🤖"},
+    {"id": 4, "name": "Career", "slug": "career", "icon": "🚀"}
+]
+
 def admin_required(f):
     from functools import wraps
     @wraps(f)
