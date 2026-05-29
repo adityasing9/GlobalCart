@@ -10,14 +10,13 @@ MOCK_MODE = False
 pool = None
 
 try:
-    # If MYSQL_HOST is not set or connection fails, we enter mock mode
-    if not os.getenv("MYSQL_HOST") and not os.getenv("VERCEL"):
-        # Local development fallback
-        pass
+    # If VERCEL environment variable is set, instantly enter mock mode
+    if os.getenv("VERCEL"):
+        raise Exception("Skipping DB connection on Vercel to avoid TCP timeout")
     
     pool = pooling.MySQLConnectionPool(
         pool_name="globalcart_pool",
-        pool_size=1, # Reduce to 1 for Vercel serverless to avoid connection exhaustion if it works
+        pool_size=1,
         host=os.getenv("MYSQL_HOST", "localhost"),
         port=int(os.getenv("MYSQL_PORT", 3306)),
         user=os.getenv("MYSQL_USER", "root"),
