@@ -9,6 +9,27 @@
   <i>A robust, database-driven Single Page Application (SPA) designed for instant delivery of digital products.</i>
 </div>
 
+<br>
+
+## 📸 UI Showcase
+
+<div align="center">
+  <img src="screenshots/1-home.png" alt="Home Page" width="800">
+  <br><i>Premium Home Page with Glassmorphism Design</i><br><br>
+  
+  <img src="screenshots/2-products.png" alt="Products Page" width="800">
+  <br><i>Dynamic Products Catalog and Filtering</i><br><br>
+  
+  <img src="screenshots/3-cart.png" alt="Cart Page" width="800">
+  <br><i>Interactive Cart Management</i><br><br>
+  
+  <img src="screenshots/4-checkout.png" alt="Checkout Page" width="800">
+  <br><i>Secure Checkout with Multiple Payment Gateways</i><br><br>
+  
+  <img src="screenshots/5-admin.png" alt="Admin Dashboard" width="800">
+  <br><i>Admin Dashboard for Revenue and Order Tracking</i><br>
+</div>
+
 ---
 
 ## 📖 About the Project
@@ -2040,8 +2061,6 @@ Because **different problems need different tools**:
 Our project uses MySQL because our core requirement is **transactional integrity for financial data**, which is MySQL's strongest suit.
 
 </details>
-
----
 
 <div align="center">
   <br>
