@@ -1,11 +1,14 @@
 from flask import Blueprint, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from db import get_db
+from db import get_db, MOCK_MODE
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
+    if MOCK_MODE:
+        return jsonify({'error': 'Demo mode: Database is not connected online. Please run the project locally for the full DBMS experience.'}), 400
+
     data = request.get_json()
     username = data.get('username', '').strip()
     email = data.get('email', '').strip().lower()
@@ -41,6 +44,9 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
+    if MOCK_MODE:
+        return jsonify({'error': 'Demo mode: Database is not connected online. Please run the project locally for the full DBMS experience.'}), 401
+
     data = request.get_json()
     email = data.get('email', '').strip().lower()
     password = data.get('password', '')
